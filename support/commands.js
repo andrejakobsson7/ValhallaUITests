@@ -77,3 +77,8 @@ Cypress.Commands.add(
     cy.get(".w-100").click();
   }
 );
+
+//Help method for verifying current URL on pages where a specific entity is displayed.
+Cypress.Commands.add("verifyURL", (entityName) => {
+  cy.url().should("contain", entityName);
+});

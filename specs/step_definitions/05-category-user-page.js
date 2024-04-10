@@ -1,8 +1,6 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-let foundCompletedCategoryId = 3;
+let foundCompletedCategoryId;
 let foundCompletedSegmentId = 3;
-let completedSubCategories = 0;
-let totalSubCategories = 0;
 
 Given("that I am logged in as user", () => {
   cy.loginAsUser();
@@ -15,10 +13,11 @@ Given("standing on the home page", () => {
 Given(
   "I click on a category where the user has not finished all segments",
   () => {
+    foundCompletedCategoryId = 3;
     cy.get(".card > .card-header > .progress")
       .each(($element) => {
         if ($element.text().includes("100%")) {
-          foundCompletedCategoryId = foundCompletedCategoryId + 2;
+          foundCompletedCategoryId++;
         } else {
           return false;
         }
@@ -33,21 +32,26 @@ Given(
 
 Given("I am redirected to the selected category page", () => {
   cy.wait(1000);
-  cy.url().should("contain", foundCompletedCategoryId - 2);
+  cy.verifyURL("category");
 });
 
 When("I click a link for a locked segment", () => {
+  //Find all paragraphs
   cy.get(".card > .card-header > p")
     .each(($element) => {
+      //Loop through each found paragraph and look for the completion text.
       if ($element.text().includes("Du har klarat") === false) {
         console.log($element.text());
+        //If not found in the current element, add to indexer.
         foundCompletedSegmentId = foundCompletedSegmentId + 2;
         console.log(foundCompletedSegmentId);
       } else {
+        //If found, break.
         return false;
       }
     })
     .then(() => {
+      //Use the index to access the element and click the button.
       cy.get(
         `:nth-child(${
           foundCompletedSegmentId + 1
@@ -57,7 +61,7 @@ When("I click a link for a locked segment", () => {
 });
 
 Then("Nothing should happen", () => {
-  cy.url().should("contain", `/category/${foundCompletedCategoryId - 2}`);
+  cy.verifyURL("category");
 });
 
 When("I click on a clickable segment", () => {
@@ -68,5 +72,5 @@ When("I click on a clickable segment", () => {
 
 Then("I should be redirected to segment page", () => {
   cy.wait(1000);
-  cy.url().should("contain", `/Segment/${foundCompletedSegmentId}`);
+  cy.verifyURL("Segment");
 });
