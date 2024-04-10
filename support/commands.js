@@ -24,6 +24,10 @@ Cypress.Commands.add("visitAdminSegmentPage", () => {
   cy.visit("/Admin/Segment/SegmentPage");
 });
 
+Cypress.Commands.add("visitAdminSubcategoryPage", () => {
+  cy.visit("/Admin/SubCategory/SubCategoryPage");
+});
+
 Cypress.Commands.add("visitHomePage", () => {
   cy.visit("/Hem");
 });
@@ -77,3 +81,8 @@ Cypress.Commands.add(
     cy.get(".w-100").click();
   }
 );
+
+//Help method for verifying current URL on pages where a specific entity is displayed.
+Cypress.Commands.add("verifyURL", (entityName) => {
+  cy.url().should("contain", entityName);
+});
