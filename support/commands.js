@@ -28,6 +28,10 @@ Cypress.Commands.add("visitAdminSubcategoryPage", () => {
   cy.visit("/Admin/SubCategory/SubCategoryPage");
 });
 
+Cypress.Commands.add("visitAdminQuestionPage", () => {
+  cy.visit("/Admin/Question/QuestionPage");
+});
+
 Cypress.Commands.add("visitHomePage", () => {
   cy.visit("/Hem");
 });
