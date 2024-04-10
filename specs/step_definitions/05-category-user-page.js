@@ -40,10 +40,10 @@ When("I click a link for a locked segment", () => {
   cy.get(".card > .card-header > p")
     .each(($element) => {
       //Loop through each found paragraph and look for the completion text.
-      if ($element.text().includes("Du har klarat") === false) {
+      if ($element.text().includes("Slutför tidigare") == false) {
         console.log($element.text());
         //If not found in the current element, add to indexer.
-        foundCompletedSegmentId = foundCompletedSegmentId + 2;
+        foundCompletedSegmentId++;
         console.log(foundCompletedSegmentId);
       } else {
         //If found, break.
@@ -53,9 +53,7 @@ When("I click a link for a locked segment", () => {
     .then(() => {
       //Use the index to access the element and click the button.
       cy.get(
-        `:nth-child(${
-          foundCompletedSegmentId + 1
-        }) > .card > .card-header > a > h5`
+        `:nth-child(${foundCompletedSegmentId}) > .card > .card-header > a > h5`
       ).click();
     });
 });
@@ -66,7 +64,7 @@ Then("Nothing should happen", () => {
 
 When("I click on a clickable segment", () => {
   cy.get(
-    `:nth-child(${foundCompletedSegmentId}) > .card > .card-header > a > h5`
+    `:nth-child(${foundCompletedSegmentId - 1}) > .card > .card-header > a > h5`
   ).click();
 });
 

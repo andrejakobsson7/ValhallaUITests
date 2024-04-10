@@ -24,6 +24,10 @@ Cypress.Commands.add("visitAdminSegmentPage", () => {
   cy.visit("/Admin/Segment/SegmentPage");
 });
 
+Cypress.Commands.add("visitAdminSubcategoryPage", () => {
+  cy.visit("/Admin/SubCategory/SubCategoryPage");
+});
+
 Cypress.Commands.add("visitHomePage", () => {
   cy.visit("/Hem");
 });

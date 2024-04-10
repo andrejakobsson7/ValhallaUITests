@@ -48,9 +48,7 @@ When("I click a link for a locked subcategory", () => {
   //Loop through each subcategory and look for which subcategoryIndex the user is available to start from
   cy.get(".card")
     .each(($element) => {
-      if (
-        $element.text().includes("Slutför tidigare subkategorier") === false
-      ) {
+      if ($element.text().includes("Slutför tidigare subkategorier") == false) {
         console.log($element.text());
         firstAvailableSubCategoryIndex++;
         console.log(firstAvailableSubCategoryIndex);

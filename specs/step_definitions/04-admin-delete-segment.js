@@ -6,7 +6,7 @@ Given('that I am logged in as an admin', () => {});*/
 /* No duplicate steps, this one already in 02-admin-add-segment.js
 Given('standing on the admin segment page', () => {});*/
 
-When("I click the Edit-button for the first available segment", () => {
+When("I click the Edit-button for the first available entity", () => {
   cy.get(`:nth-child(${index}) > .card-body > .btn-info`).click();
 });
 
@@ -20,9 +20,9 @@ When('I click the Update button', () => {});*/
 When('I click Yes in the confirmation modal', () => {});*/
 
 When(
-  "I click Delete-button for the first available segment with the name {string}",
-  (a) => {
-    cy.get(`:nth-child(${index}) > .card-body > .card-title`).contains(a);
+  "I click Delete-button for the first available entity with the name {string}",
+  (name) => {
+    cy.get(`:nth-child(${index}) > .card-body > .card-title`).contains(name);
     cy.get(`:nth-child(${index}) > .card-body > .btn-danger`).click();
   }
 );
