@@ -1,16 +1,16 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-
 Given("that I am logged in as an admin", () => {
   cy.loginAsAdmin();
 });
 
 Given("standing on the admin category page", () => {
   cy.visitAdminCategoryPage();
-  cy.wait(1500);
 });
 
 When("I type {string} in name field", (categoryName) => {
-  cy.get('[name="Category.Name"]').type(categoryName);
+  //Add waiting time to make sure Blazor has loaded the page twice. This is a last resort after trying to intercept requests and waiting for them.
+  cy.wait(1000);
+  cy.get('[name="Category.Name"]').should("be.enabled").type(categoryName);
 });
 
 When("I type {string} in description field", (categoryDescription) => {
