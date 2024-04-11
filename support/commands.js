@@ -1,5 +1,7 @@
 //Help methods for visiting pages
 
+const baseUrl = require("../baseUrl");
+
 Cypress.Commands.add("visitFirstPage", () => {
   cy.visit("/");
 });
@@ -26,6 +28,9 @@ Cypress.Commands.add("visitAdminSegmentPage", () => {
 
 Cypress.Commands.add("visitAdminSubcategoryPage", () => {
   cy.visit("/Admin/SubCategory/SubCategoryPage");
+});
+Cypress.Commands.add("visitAdminQuestionPage", () => {
+  cy.visit("/Admin/Question/QuestionPage");
 });
 
 Cypress.Commands.add("visitAdminQuestionPage", () => {
@@ -89,4 +94,133 @@ Cypress.Commands.add(
 //Help method for verifying current URL on pages where a specific entity is displayed.
 Cypress.Commands.add("verifyURL", (entityName) => {
   cy.url().should("contain", entityName);
+});
+
+//Help method for adding new category
+Cypress.Commands.add("addNewCategory", (categoryName, categoryDescription) => {
+  cy.loginAsAdmin();
+  cy.visitAdminCategoryPage();
+  cy.wait(1000);
+  cy.get('[name="Category.Name"]').should("be.enabled").type(categoryName);
+  cy.get('[name="Category.Description"]').type(categoryDescription);
+  cy.get(".card > .btn").click();
+  cy.get(".btn-primary").click();
+  cy.get(".category > :last-child").contains(categoryName);
+  cy.get(".category > :last-child").contains(categoryDescription);
+});
+
+//Help method for adding new subcategory/segment
+Cypress.Commands.add(
+  "addNewEntity",
+  (entityType, newEntityName, newEntityDescription, newEntityParentName) => {
+    cy.loginAsAdmin();
+    if (entityType === "segment") {
+      cy.visitAdminSegmentPage();
+    } else if (entityType === "subcategory") {
+      cy.visitAdminSubcategoryPage();
+    }
+    cy.wait(1000);
+    cy.get(`[name="${entityType}.Name"]`)
+      .should("be.enabled")
+      .type(newEntityName);
+    cy.get(`[name="${entityType}.Description"]`)
+      .should("be.enabled")
+      .type(newEntityDescription);
+    //Since the dropdown can contain multiple entities with the same name, we select the first that matches the provided name
+    cy.get("select.valid")
+      .find("option")
+      .contains(newEntityParentName)
+      .first()
+      .then((element) => {
+        cy.get("select.valid").select(element.val());
+      });
+    cy.get(".card > .btn").click();
+    cy.get(".btn-primary").click();
+    cy.wait(1000);
+    cy.get(`.${entityType} > :last-child`).contains(newEntityName);
+    cy.get(`.${entityType} > :last-child`).contains(newEntityParentName);
+    cy.get(`.${entityType} > :last-child`).contains(newEntityDescription);
+  }
+);
+
+Cypress.Commands.add(
+  "addNewQuestion",
+  (
+    question,
+    explanation,
+    subcategory,
+    firstAnswer,
+    secondAnswer,
+    thirdAnswer
+  ) => {
+    cy.loginAsAdmin();
+    cy.visitAdminQuestionPage();
+    cy.wait(1000);
+    cy.get('[name="Question.Question"]').should("be.enabled").type(question);
+    cy.get('[name="Question.Explanation"]')
+      .should("be.enabled")
+      .type(explanation);
+    //Since the dropdown can contain multiple entities with the same name, we select the first that matches the provided name
+    cy.get("select.valid")
+      .find("option")
+      .contains(subcategory)
+      .first()
+      .then((element) => {
+        cy.get("select.valid").select(element.val());
+      });
+    cy.get('[name="Answer.Answer"]')
+      .should("be.enabled")
+      .clear()
+      .type(firstAnswer);
+    cy.get('[type="checkbox"]').check();
+    cy.get(".card > form > .btn").click();
+    cy.get(".btn-primary").click();
+    cy.get('[name="Answer.Answer"]')
+      .should("be.enabled")
+      .clear()
+      .type(secondAnswer);
+    cy.get('[type="checkbox"]').uncheck();
+    cy.get(".card > form > .btn").click();
+    cy.get(".btn-primary").click();
+    cy.get('[name="Answer.Answer"]')
+      .should("be.enabled")
+      .clear()
+      .type(thirdAnswer);
+    cy.get(".card > form > .btn").click();
+    cy.get(".btn-primary").click();
+    cy.get('[value="Create a question"]').click();
+    cy.get(".btn-primary").click();
+    cy.wait(1000);
+    cy.get(".card-body").last().should("contain", question);
+    cy.get(".card-body").last().should("contain", explanation);
+    cy.get(".card-body").last().should("contain", subcategory);
+    cy.get('.card-body > [style="color:green"]')
+      .last()
+      .should("contain", firstAnswer);
+    cy.get(".card-body > :nth-child(6)").last().should("contain", secondAnswer);
+    cy.get(".card-body > :nth-child(7)").last().should("contain", thirdAnswer);
+  }
+);
+
+Cypress.Commands.add("makeCall", (entityType, method, entityToPost) => {
+  let encryptedCredentials = btoa("admin:Password1234!");
+  if (method === "DELETE") {
+    url = `${baseUrl}/api/${entityType}/${entityToPost}`;
+  } else {
+    url = `${baseUrl}/api/${entityType}`;
+  }
+  return fetch(url, {
+    method: `${method}`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Basic " + encryptedCredentials,
+    },
+    body: JSON.stringify(entityToPost),
+  }).then((response) => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error(response);
+    }
+  });
 });
