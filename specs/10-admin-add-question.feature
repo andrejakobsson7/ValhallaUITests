@@ -26,3 +26,16 @@ And I click yes in the confirmation modal
 And I click the button to create a new entity
 And I click yes in the confirmation modal
 Then I should see an error prompt 
+
+Scenario: Add new question with more than one correct answer
+When I type "New admin test-question" in question field
+And I type "Explanation for new admin test-question" in explanation field
+And I select the first available parent-entity in the dropdown menu for parent-entities
+And I type "Test-answer" in answer field
+And i click on the correct answer checkbox
+And I click the button to add a new answer
+And I click yes in the confirmation modal
+And I type "Test-answer2" in answer field
+And I click the button to add a new answer
+And I click yes in the confirmation modal
+Then I should see an error prompt 

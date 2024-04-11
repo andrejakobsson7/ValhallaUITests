@@ -37,6 +37,7 @@ function completeQuiz() {
       let currentQuestionNr = 1;
       // Keep clicking through the test while we're not at the last question
       while (currentQuestionNr <= totalQuestions) {
+        cy.wait(1000);
         cy.get(":nth-child(1) > .btn").click();
         cy.get(".card-body.mt-1 > div > button").click();
         // Break if were at the last question
